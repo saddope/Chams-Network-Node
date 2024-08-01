@@ -1,48 +1,48 @@
-Project Information
-Twitter : @ChasmNetwork
-Website : Visit
-Node Info
-Need VPS, Requirements are mentioned below, You can't run this node on Gitpod/Github Codespace
-You can buy VPS from PQ Hosting/Contabo/ OVHCloud
-This node is Incentivised
-Min Requirements
-Requirement	Details
-Operating System	Linux (linux/amd64, linux/arm64)
-vCPU	1
-RAM	1GB
-Disk Space	20GB
-IP Address	Static IP
-Recommended Server Requirements
-Requirement	Details
-Operating System	Ubuntu (20.04 LTS onwards)
-vCPU	2
-RAM	4GB
-Disk Space	50GB SSD
-IP Address	Static IP
-Prerequisites
-Visit : https://console.groq.com/keys (If it is not working in default, try it on Incognito tab)
+Вот форматированное руководство, которое вы можете использовать для файла README на GitHub:
 
-Copy the API key after signing in
+---
 
-Save it somewhere for now
+# Chasm Node Setup Guide
 
-Now visit : https://scout.chasm.net/private-mint
+## Project Information
+- **Twitter:** [@ChasmNetwork](https://twitter.com/ChasmNetwork)
+- **Website:** [Visit](https://chasm.net)
 
-Mint this with 0.025 $MNT Gas fee
+## Node Information
+**This node is incentivized.** Please ensure you meet the minimum requirements before proceeding with the setup.
 
-After minting, click on _mint(scout) button
+### Minimum Requirements
+- **Operating System:** Linux (linux/amd64, linux/arm64)
+- **vCPU:** 1
+- **RAM:** 1GB
+- **Disk Space:** 20GB
+- **IP Address:** Static IP
 
-Copy the value of SCOUT_UID and WEBHOOK_API_KEY
+### Recommended Server Requirements
+- **Operating System:** Ubuntu (20.04 LTS onwards)
+- **vCPU:** 2
+- **RAM:** 4GB
+- **Disk Space:** 50GB SSD
+- **IP Address:** Static IP
 
-Save it somewhere for now
+## Prerequisites
 
-Now, Go to : https://dashboard.ngrok.com/signup
+1. **Obtain API Key:**
+   - Visit [Groq Console](https://console.groq.com/keys) and sign in.
+   - Copy the API key and save it securely.
 
-Go to Your Authtoken section
+2. **Mint SCOUT_UID and WEBHOOK_API_KEY:**
+   - Visit [Chasm Scout Mint](https://scout.chasm.net/private-mint) and mint your node with 0.025 $MNT gas fee.
+   - After minting, click on the _mint(scout) button and copy the SCOUT_UID and WEBHOOK_API_KEY. Save them securely.
 
-Click on Show Authtoken button in the corner, then copy the command and save it somewhere else for now
+3. **Setup Ngrok:**
+   - Sign up at [Ngrok](https://dashboard.ngrok.com/signup).
+   - Go to the "Your Authtoken" section, reveal the authtoken, and save it securely.
 
-Installation
+## Installation
+
+### 1. Update and Install Dependencies
+```bash
 sudo apt update && sudo apt upgrade -y
 for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
 sudo apt-get update
@@ -50,44 +50,81 @@ sudo apt-get install ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo apt install screen -y
- curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list && sudo apt update && sudo apt install ngrok
-Now paste the command, you copied earlier from ngrok website (example : ngrok config add-authtoken yourauthtoken)
+```
+
+### 2. Install Ngrok
+```bash
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+sudo apt update && sudo apt install ngrok
+```
+
+### 3. Configure Ngrok
+Run the command copied from the Ngrok website (replace `yourauthtoken` with your actual authtoken):
+```bash
+ngrok config add-authtoken yourauthtoken
+```
+
+### 4. Start Ngrok
+```bash
 screen ngrok http 3001
-Go to forwarding section and copy the first URL and save it somewhere (It will look like https://1bXX.XX.XXX.XXX.ngrok-free.app)
-Press Ctrl + A + D to detach from screen session
-nano .env
-Copy this format and paste the required value there, you copied earlier from different websites
+```
+- Copy the forwarding URL (e.g., `https://1bXX.XX.XXX.XXX.ngrok-free.app`) and save it. 
+- Detach from the screen session by pressing `Ctrl + A + D`.
+
+### 5. Create and Configure Environment File
+Create a `.env` file and paste the following:
+```env
 PORT=3001
 LOGGER_LEVEL=debug
 
 ORCHESTRATOR_URL=https://orchestrator.chasm.net
 SCOUT_NAME=tukangturu
-SCOUT_UID=PASTE UID
-WEBHOOK_API_KEY=PASTE API KEY
-WEBHOOK_URL=PASTE NGROK FREE APP URL LINK HERE
+SCOUT_UID=PASTE_UID_HERE
+WEBHOOK_API_KEY=PASTE_API_KEY_HERE
+WEBHOOK_URL=PASTE_NGROK_FREE_APP_URL_HERE
 PROVIDERS=groq
 MODEL=gemma2-9b-it
-GROQ_API_KEY=PASTE GROK API KEY HERE
-Save this file using Ctrl + X then Y and then press Enter
-ufw allow 3001
+GROQ_API_KEY=PASTE_GROQ_API_KEY_HERE
+```
+Replace the placeholders (`PASTE_UID_HERE`, `PASTE_API_KEY_HERE`, etc.) with the actual values obtained earlier.
+
+### 6. Configure Firewall
+```bash
+sudo ufw allow 3001
+```
+
+### 7. Deploy Docker Container
+```bash
 docker pull chasmtech/chasm-scout:latest
 docker run -d --restart=always --env-file ./.env -p 3001:3001 --name scout chasmtech/chasm-scout
+```
+
+### 8. Verify Node Status
+Check the logs to ensure the node is running correctly:
+```bash
 docker logs scout
+```
+
+Test the endpoint:
+```bash
 curl localhost:3001
+```
+Expected output: `OK`
+
+### 9. Send Test Request
+```bash
 source ./.env
 curl -X POST \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer $WEBHOOK_API_KEY" \
      -d '{"body":"{\"model\":\"gemma2-9b-it\",\"messages\":[{\"role\":\"system\",\"content\":\"You are a helpful assistant.\"}]}"}' \
      $WEBHOOK_URL
-Done !!
-Node Status
-You can now check your node status here : Visit
-If you see Yellow or Green, it means your node is working properly, also your yellow dot will be turned into green dot after 1 or 2 hrs
+```
+
+## Node Status
+You can check your node status [here](https://chasm.net/status). If you see a yellow or green status, your node is functioning properly. The yellow dot will turn green within 1 or 2 hours.
