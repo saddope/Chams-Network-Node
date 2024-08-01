@@ -1,7 +1,3 @@
-Вот форматированное руководство, которое вы можете использовать для файла README на GitHub:
-
----
-
 # Chasm Node Setup Guide
 
 ## Project Information
